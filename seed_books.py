@@ -148,7 +148,7 @@ async def seed_books(api_base_url: str = "http://localhost:8000"):
             
             try:
                 response = await client.post(
-                    f"{api_base_url}/books/enrich/bulk",
+                    f"{api_base_url}/api/v1/books/enrich/bulk",
                     json={"isbns": batch}
                 )
                 
