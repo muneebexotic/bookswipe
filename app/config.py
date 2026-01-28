@@ -20,6 +20,8 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        # Allow both uppercase and lowercase env vars
+        case_sensitive = False
 
 
 @lru_cache
