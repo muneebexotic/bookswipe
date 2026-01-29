@@ -1,0 +1,9 @@
+# Force Railway/Nixpacks to use Python provider instead of auto-detecting Dart/Flutter
+[phases.setup]
+nixPkgs = ["python311"]
+
+[phases.install]
+cmds = ["pip install -r requirements.txt"]
+
+[start]
+cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
