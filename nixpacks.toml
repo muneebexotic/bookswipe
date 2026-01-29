@@ -2,16 +2,16 @@
 # This prevents auto-detection of Dart/Flutter from pubspec.yaml
 providers = ["python"]
 
-# Let Nixpacks handle Python setup automatically with its default venv
-[phases.setup]
-nixPkgs = ["python311", "python311Packages.pip"]
-
+# Create venv and install dependencies (avoiding PEP 668 externally-managed-environment error)
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+    "python -m venv /opt/venv",
+    ". /opt/venv/bin/activate && pip install -r requirements.txt"
+]
 
 # Explicitly disable the build phase (prevents Dart compilation)
 [phases.build]
 cmds = []
 
 [start]
-cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+cmd = ". /opt/venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
