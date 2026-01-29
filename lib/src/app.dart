@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'features/auth/presentation/screens/login_screen.dart';
-import 'features/auth/presentation/screens/signup_screen.dart';
-import 'features/auth/presentation/screens/forgot_password_screen.dart';
+import 'routing/app_router.dart';
+import 'theme/app_theme.dart';
 
 /// Main application widget
 class BookSwipeApp extends ConsumerWidget {
@@ -10,30 +9,15 @@ class BookSwipeApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
+    final router = ref.watch(goRouterProvider);
+
+    return MaterialApp.router(
       title: 'BookSwipe',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      home: const LoginScreen(),
-      routes: {
-        '/login': (context) => const LoginScreen(),
-        '/signup': (context) => const SignupScreen(),
-        '/forgot-password': (context) => const ForgotPasswordScreen(),
-      },
+      routerConfig: router,
     );
   }
 }
