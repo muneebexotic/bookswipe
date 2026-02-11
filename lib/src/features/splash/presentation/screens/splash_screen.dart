@@ -4,6 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../constants/app_sizes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../routing/app_router.dart';
+import '../../../../routing/routes.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../auth/domain/enums/auth_status.dart';
 import '../controllers/splash_controller.dart';
 
 /// Splash screen with animated logo and app branding.
@@ -29,11 +33,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
     if (!isComplete || !mounted) return;
 
-    // Get next route from controller
-    final nextRoute = await ref.read(splashControllerProvider.notifier).getNextRoute();
+    // Mark splash as done so the router knows not to come back here
+    ref.read(authNotifierProvider).markSplashComplete();
 
+    // Navigate based on actual auth state
+    final authState = ref.read(authControllerProvider);
     if (mounted) {
-      context.go(nextRoute);
+      if (authState.status == AuthStatus.authenticated) {
+        context.go(Routes.home);
+      } else {
+        context.go(Routes.login);
+      }
     }
   }
 
@@ -46,12 +56,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppTheme.splashGradient,
-            stops: [0.0, 0.5, 1.0],
-          ),
+          color: AppTheme.coralPrimary,
         ),
         child: SafeArea(
           child: Column(

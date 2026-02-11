@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../theme/app_theme.dart';
 
 /// Forgot password screen for password reset
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
@@ -45,6 +47,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           SnackBar(
             content: Text(e.toString()),
             backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
@@ -55,11 +61,14 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reset Password'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: _emailSent ? _buildSuccessView() : _buildFormView(),
         ),
       ),
@@ -72,26 +81,47 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 24),
+          const SizedBox(height: 40),
+          // Icon
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppTheme.coralPrimary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.lock_reset_rounded,
+              size: 40,
+              color: AppTheme.coralPrimary,
+            ),
+          ),
+          const SizedBox(height: 32),
           Text(
             'Forgot Password?',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: AppTheme.charcoal,
+                  fontSize: 28,
                 ),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
-            'Enter your email address and we\'ll send you a link to reset your password.',
+            'No worries! Enter your email and we\'ll send you a reset link.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey,
+                  color: AppTheme.darkGray,
+                  fontSize: 16,
                 ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 48),
           TextFormField(
             controller: _emailController,
             decoration: const InputDecoration(
               labelText: 'Email',
-              prefixIcon: Icon(Icons.email),
+              hintText: 'Enter your email',
+              prefixIcon: Icon(Icons.email_outlined),
             ),
             keyboardType: TextInputType.emailAddress,
             textCapitalization: TextCapitalization.none,
@@ -106,14 +136,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               return null;
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           ElevatedButton(
             onPressed: _isLoading ? null : _handleSubmit,
             child: _isLoading
                 ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : const Text('Send Reset Link'),
           ),
@@ -126,30 +159,49 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(
-          Icons.check_circle,
-          color: Colors.green,
-          size: 80,
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: AppTheme.coralPrimary.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.mark_email_read_rounded,
+            color: AppTheme.coralPrimary,
+            size: 50,
+          ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
         Text(
-          'Email Sent!',
+          'Check Your Email',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Check your email for a password reset link.',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey,
+                color: AppTheme.charcoal,
+                fontSize: 28,
               ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
+        Text(
+          'We\'ve sent a password reset link to\n${_emailController.text.trim()}',
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppTheme.darkGray,
+                fontSize: 16,
+              ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 48),
         ElevatedButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           child: const Text('Back to Login'),
+        ),
+        const SizedBox(height: 16),
+        TextButton(
+          onPressed: () {
+            setState(() => _emailSent = false);
+          },
+          child: const Text('Didn\'t receive the email?'),
         ),
       ],
     );
